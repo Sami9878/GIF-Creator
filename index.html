@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowing River GIF Maker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+    }
+
+    .river-background {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(120deg, #1e90ff, #00bfff, #1e90ff);
+      background-size: 300% 300%;
+      animation: flowingRiver 6s infinite linear;
+    }
+
+    @keyframes flowingRiver {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3);
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      color: #fff;
+      background: linear-gradient(90deg, red, blue, green, yellow);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textFlow 4s infinite linear;
+    }
+
+    @keyframes textFlow {
+      0% { background-position: 0%; }
+      100% { background-position: 100%; }
+    }
+
+    .file-input {
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .file-input label {
+      display: block;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 2px solid #fff;
+      border-radius: 5px;
+      background: linear-gradient(90deg, red, blue, green, yellow);
+      color: #fff;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .file-input input {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    label:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.7);
+    }
+
+    .file-info {
+      font-size: 14px;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    .preview {
+      margin: 20px auto;
+      max-width: 300px;
+      max-height: 300px;
+      border: 2px solid #fff;
+      display: none;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background: linear-gradient(90deg, red, blue, green, yellow);
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: block;
+      width: 100%;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.7);
+    }
+
+    button:disabled {
+      background: grey;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="river-background">
+    <div class="container">
+      <h1>FREE GIF MAKER</h1>
+      <div class="file-input">
+        <label for="gifInput">Choose a File</label>
+        <input type="file" id="gifInput" accept="image/gif,image/png,image/jpeg">
+      </div>
+      <div class="file-info" id="fileInfo">
+        Supported formats: ONLY VIDEO <br>
+        Max resolution: 500×500 px
+        
+      </div>
+      <img id="gifPreview" class="preview" src="" alt="Preview">
+      <button id="downloadBtn" disabled>Download</button>
+    </div>
+  </div>
+
+  <script>
+    const gifInput = document.getElementById('gifInput');
+    const gifPreview = document.getElementById('gifPreview');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const fileInfo = document.getElementById('fileInfo');
+
+    gifInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const validFormats = ['image/gif', 'image/png', 'image/jpeg'];
+        if (validFormats.includes(file.type)) {
+          const img = new Image();
+          img.onload = () => {
+            if (img.width <= 1920 && img.height <= 1080) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                gifPreview.src = e.target.result;
+                gifPreview.style.display = 'block';
+                downloadBtn.disabled = false;
+              };
+              reader.readAsDataURL(file);
+            } else {
+              alert('Image resolution exceeds 1920x1080 pixels.');
+              gifInput.value = '';
+            }
+          };
+          img.src = URL.createObjectURL(file);
+        } else {
+          alert('Unsupported file format. Please upload JPG, PNG, or GIF.');
+          gifInput.value = '';
+        }
+      }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = gifPreview.src;
+      link.download = 'downloaded_image';
+      link.click();
+    });
+  </script>
+</body>
+</html>
